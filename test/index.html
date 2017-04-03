@@ -1,0 +1,39 @@
+<html lang="fi">
+<meta charset="utf-8">
+<script src="../js/mini-observables.js"></script>
+
+<div id="t1"></div>
+<div id="t2">
+  <input type="text" id="t2i" mv="t2i|uc" />
+  <p id="p2i"></p>
+  <p id="p2i2" style="font-weight:700;"></p>
+</div>
+
+<script type="text/javascript">
+    window.store = {};
+
+    function createMiniValD3CsvCallback(store, name, errorName) {
+        return function(data, error) {
+            if (error) {
+                setMiniVal(store, errorName||"error", error);
+                return;
+            }
+            setMiniVal(store, name, data);
+        };
+    }
+
+
+    function docgid(id) { return document.getElementById(id); }
+    function setMv(name, value) { return setMiniVal(store, name, value); }
+    function getMv(name) { return getMiniVal(store, name); }
+    function obsMv(name, cb) { addObserver(store, name, cb); }
+    function mvCsvCb(name, errorName) { return createMiniValCsvCallback(store, name, errorName); }
+    function mvBoot(node) { bootstrapDomNode("store", node); }
+
+    mvBoot(docgid("t2i"));
+    setMv("t2i", "");
+    obsMv("t2i", function(val) { docgid("p2i").innerHTML = val; });
+    obsMv("t2i", function(val) { docgid("p2i2").innerHTML = val+val; });
+</script>
+
+</html>

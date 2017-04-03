@@ -1,0 +1,20 @@
+{
+  "name": "mini-observables",
+  "version": "1.0.0",
+  "description": "minimalistic observable–observer library for js",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "javascript",
+    "observable"
+  ],
+  "author": "paavo.v.toivanen@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "connect": "^3.6.0",
+    "serve-static": "^1.12.1"
+  }
+}
