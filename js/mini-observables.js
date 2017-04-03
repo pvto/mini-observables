@@ -15,7 +15,9 @@ function setMiniVal(store, name, value) {
 
 function getMiniVal(store, name) {
     var obj = store[name];
-    return obj.value;
+    if (obj)
+        return obj.value;
+    return null;
 }
 
 function addObserver(store, name, callback) {
@@ -40,9 +42,12 @@ function bootstrapDomNode(storeName, node) {
     if (parts.length === 1) {
         parts.push("c");
     }
+
+    var store = window[storeName];
+    setMiniVal(store, parts[0], getMiniVal(store, parts[0])||null);
+
     parts[1].split("").forEach(function(chr) {
         node.setAttribute(BSMAP[chr],
             "setMiniVal("+storeName+",'"+parts[0]+"',this.value);"); })
-    console.log(name + " " + parts);
 
 }
