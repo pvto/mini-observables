@@ -3,8 +3,11 @@
 function setMiniVal(store, name, value) {
     var obj = store[name];
     if (!obj) {
-        obj = { observers: [] };
+        obj = { };
         store[name] = obj;
+    }
+    if (!obj.observers) {
+        obj.observers = [];
     }
     var oldVal = obj.value;
     var newVal = value;
@@ -27,6 +30,9 @@ function addObserver(store, name, callback) {
 
 function getObservers(store, name) {
     var obj = store[name];
+    if (!obj) {
+        return null;
+    }
     return obj.observers;
 }
 
@@ -44,7 +50,7 @@ function bootstrapDomNode(storeName, node) {
     }
 
     var store = window[storeName];
-    setMiniVal(store, parts[0], getMiniVal(store, parts[0])||null);
+    setMiniVal(store, parts[0], getMiniVal(store, parts[0]));
 
     parts[1].split("").forEach(function(chr) {
         node.setAttribute(BSMAP[chr],
