@@ -1,9 +1,9 @@
 "use strict";
 
-function setMiniVal(store, name, value) {
+function setMiniVal(store, name, value, dirty) {
     var obj = store[name];
     if (!obj) {
-        obj = { };
+        obj = {};
         store[name] = obj;
     }
     if (!obj.observers) {
@@ -12,7 +12,9 @@ function setMiniVal(store, name, value) {
     var oldVal = obj.value;
     var newVal = value;
     obj.value = newVal;
-    obj.observers.forEach( function(d){ d(newVal, name, oldVal);} );
+    if (!dirty && newVal != oldVal) {
+        obj.observers.forEach( function(d){ d(newVal, name, oldVal);} );
+    }
     return oldVal;
 }
 
@@ -25,14 +27,15 @@ function getMiniVal(store, name) {
 
 function addObserver(store, name, callback) {
     var obj = store[name];
+    if (!obj) {
+        setMiniVal(store, name, null);
+        obj = store[name];
+    }
     obj.observers.push(callback);
 }
 
 function getObservers(store, name) {
     var obj = store[name];
-    if (!obj) {
-        return null;
-    }
     return obj.observers;
 }
 
@@ -50,10 +53,14 @@ function bootstrapDomNode(storeName, node) {
     }
 
     var store = window[storeName];
-    setMiniVal(store, parts[0], getMiniVal(store, parts[0]));
+    setMiniVal(store, parts[0], getMiniVal(store, parts[0])||null, true); // set dirty flag to prevent recursion
 
     parts[1].split("").forEach(function(chr) {
-        node.setAttribute(BSMAP[chr],
-            "setMiniVal("+storeName+",'"+parts[0]+"',this.value);"); })
+        var oldAttribute = node.getAttribute(BSMAP[chr]) || "";
+        var newCallback = "setMiniVal(" + storeName + ", '" + parts[0] + "', this.value);";
+        if (oldAttribute.indexOf(newCallback) < 0) {
+            node.setAttribute(BSMAP[chr], oldAttribute + newCallback);
+        }
+    });
 
 }
